@@ -1,49 +1,46 @@
-const POKESTATS = 'POKESTATS';
-import { findByUnderscoreId } from './utils.js';
+import pokemon from './pokemon.js';
+import { findUnderlineId } from './utils.js';
 
-export function getPokeStats() {
+const POKESTATS = 'POKESTATS';
+
+export function getPokeData() {
     let stats = JSON.parse(localStorage.getItem(POKESTATS));
 
     if (!stats) {
         stats = [];
-        localStorage.setItem(POKESTATS, JSON.stringify([stats]));
+        localStorage.setItem(POKESTATS, JSON.stringify(stats));
     }
-
     return stats;
 }
 
-export function setPokeStats(newStats) {
-    localStorage.setItem(POKESTATS, JSON.stringify(newStats));
-}
 
-export function incrementSeen(stats, _id) {
-    const stats = getPokeStats();
-    const poke = findByUnderscoreId(_id);
+export function encounter(pokemonId) {
+    const stats = getPokeData();
+    const pokeId = findUnderlineId(pokemonId, stats);
 
-    if (!poke) {
-        const dataPokemon = findByUnderscoreId(pokemon, _id);
-        const newStat = {
-            name: dataPokemon.pokebase,
-            _id: _id,
-            seen: 1,
+    if (!pokeId) {
+        const pokemonStats = findUnderlineId(pokemonId, pokemon);
+        const addPoke = {
+            name: pokemonStats.pokebase,
+            _id: pokemonId,
+            encounter: 1,
             caught: 0,
         };
-
-        stats.push(newStat);
+        stats.push(addPoke);
     } else {
-        poke.seen++;
+        pokeId.encounter++;
     }
-
-    setPokeStats(stats);
+    setPokemonStats(stats);
 }
 
-export function incrementCaught(_id) {
-    const stats = getPokeStats();
-    const poke = findByUnderscoreId(stats, _id);
+export function setPokemonStats(stats) {
+    localStorage.setItem(POKESTATS, JSON.stringify(stats));
+}
 
+export function caught(pokemonId) {
+    const stats = getPokeData();
+    const pokeId = findUnderlineId(pokemonId, stats);
 
-    poke.caught++;
-
-
-    setPokeStats(stats);
+    pokeId.caught++;
+    setPokemonStats(stats);
 }
